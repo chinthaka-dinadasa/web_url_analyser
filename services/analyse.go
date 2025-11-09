@@ -48,22 +48,23 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 	return result, nil
 }
 
-func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int16, int16) {
+func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int, int) {
+
 	return 8, 1
 }
 
-func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int16, int16) {
+func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int, int) {
 	return 8, 0
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
 	return models.HeadingDetail{
-		H1: 2,
-		H2: 3,
-		H3: 4,
-		H4: 0,
-		H5: 2,
-		H6: 0,
+		H1: doc.Find("h1").Length(),
+		H2: doc.Find("h2").Length(),
+		H3: doc.Find("h3").Length(),
+		H4: doc.Find("h4").Length(),
+		H5: doc.Find("h5").Length(),
+		H6: doc.Find("h6").Length(),
 	}
 }
 
