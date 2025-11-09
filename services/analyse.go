@@ -34,16 +34,27 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	webLinksData := a.captureLinksData(targetURL, doc)
-
 	result := &models.WebAnalysingResponse{
-		HTMLVersion: a.captureHTMLVersion(doc),
-		PageTitle:   a.capturePageTitle(doc),
-		Heading:     a.captureHeadingDetails(doc),
-		LinksData:   webLinksData,
+		HTMLVersion:           a.captureHTMLVersion(doc),
+		PageTitle:             a.capturePageTitle(doc),
+		Heading:               a.captureHeadingDetails(doc),
+		LinksData:             a.captureLinksData(targetURL, doc),
+		LoginFormAvailability: a.captureLoginForm(doc),
 	}
 
 	return result, nil
+}
+
+func (a *AnalyserService) captureLoginForm(doc *goquery.Document) bool {
+	foundLoginFormData := false
+
+	if doc.Find("input[type='password']").Length() > 0 {
+		foundLoginFormData = true
+	}
+
+	// TODO: add checks for login form with Login sign in button texts if time permits
+
+	return foundLoginFormData
 }
 
 func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) models.WebLinkDetail {
