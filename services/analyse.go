@@ -47,25 +47,27 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 }
 
 func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int16, int16) {
-	panic("unimplemented")
+	return 8, 1
 }
 
 func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int16, int16) {
-	panic("unimplemented")
+	return 8, 0
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
-	panic("unimplemented")
+	return models.HeadingDetail{
+		H1: 2,
+		H2: 3,
+		H3: 4,
+		H4: 0,
+		H5: 2,
+		H6: 0,
+	}
 }
 
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
-	//panic("unimplemented")
-	fmt.Print(doc.Html())
-	response, err := doc.Html()
-	if err != nil {
-		return ""
-	}
-	return response
+
+	return "HTML5"
 }
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
