@@ -59,7 +59,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 	fmt.Printf("Base url %v\n", base.Host)
 	doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
 		href, _ := s.Attr("href")
-		fmt.Printf("Href url %v\n", href)
+
 		linkUrl, err := url.Parse(href)
 		if err != nil {
 			fmt.Printf("Error in parsing link %v \n", err)
@@ -69,7 +69,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 		if !linkUrl.IsAbs() {
 			linkUrl = base.ResolveReference(linkUrl)
 		}
-
+		fmt.Printf("Href url %v\n", linkUrl)
 		if linkUrl.Host == base.Host {
 			internalLinks++
 		} else {
@@ -84,8 +84,9 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
-	resp, err := a.client.Head(link)
-	return err == nil && resp.StatusCode < 400
+	_, err := a.client.Get(link)
+	fmt.Printf("Data comming from link accessibilty test %v", err)
+	return err == nil
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
