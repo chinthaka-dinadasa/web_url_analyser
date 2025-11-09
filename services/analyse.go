@@ -31,12 +31,31 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
+	numberOfInternalLinks, unaccessibleInLinks := a.captureInternalLinks(doc)
+	numberOfExternalLinks, unaccessibleExLinks := a.captureExternalLinks(doc)
+
 	result := &models.WebAnalysingResponse{
-		HTMLVersion: a.captureHTMLVersion(doc),
-		PageTitle:   a.capturePageTitle(doc),
+		HTMLVersion:       a.captureHTMLVersion(doc),
+		PageTitle:         a.capturePageTitle(doc),
+		Heading:           a.captureHeadingDetails(doc),
+		InternalLinks:     numberOfInternalLinks,
+		ExternalLinks:     numberOfExternalLinks,
+		UnaccessibleLinks: unaccessibleExLinks + unaccessibleInLinks,
 	}
 
 	return result, nil
+}
+
+func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int16, int16) {
+	panic("unimplemented")
+}
+
+func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int16, int16) {
+	panic("unimplemented")
+}
+
+func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
+	panic("unimplemented")
 }
 
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
