@@ -8,7 +8,3 @@ Content-Type: application/json
 {
     "url": "https://www.javatodev.com/"
 }
-
-###GET CITY WEATHER
-
-GET http://localhost:3000/weather/london

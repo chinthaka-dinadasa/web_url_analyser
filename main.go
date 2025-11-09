@@ -7,8 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type WebsiteAnalysingRequest struct {
+type WebAnalysingRequest struct {
 	Url string `json:"url" binding:"required"`
+}
+
+type WebAnalysingResponse struct {
+	HTMLVersion string `json:"htmlVersion"`
+	PageTitle   string `json:"pageTitle"`
 }
 
 func main() {
@@ -23,7 +28,6 @@ func main() {
 	})
 
 	router.POST("/process-web-url", processWebUrl)
-	// router.GET("/check/status", checkStatus)
 
 	router.Run()
 }
