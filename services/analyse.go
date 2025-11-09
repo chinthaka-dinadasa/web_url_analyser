@@ -1,8 +1,10 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"web-analyser/models"
 
 	"github.com/PuerkitoBio/goquery"
@@ -66,8 +68,31 @@ func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.He
 }
 
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
+	htmlContent, err := doc.Html()
+	if err != nil {
+		fmt.Printf("Error in parsing docs HTML content for HTML version capturing %v \n", err)
+	}
 
-	return "HTML5"
+	var decodedHtmlContent string
+
+	if err := json.Unmarshal([]byte(`"`+htmlContent+`"`), &decodedHtmlContent); err == nil {
+		htmlContent = decodedHtmlContent
+	}
+
+	html := strings.TrimSpace(strings.ToLower(htmlContent))
+
+	switch {
+	case strings.Contains(html, "<!doctype html>"):
+		return "HTML5"
+	case strings.Contains(html, "html 4.01"):
+		return "HTML4"
+	case strings.Contains(html, "xhtml"):
+		return "XHTML"
+	case strings.Contains(html, "<html"):
+		return "HTML"
+	default:
+		return "UNIDENTIFIED"
+	}
 }
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
