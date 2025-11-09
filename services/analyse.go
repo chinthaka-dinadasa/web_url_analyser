@@ -41,7 +41,12 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 	//panic("unimplemented")
-	return "HTML5"
+	fmt.Print(doc.Html())
+	response, err := doc.Html()
+	if err != nil {
+		return ""
+	}
+	return response
 }
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
