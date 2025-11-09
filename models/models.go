@@ -5,13 +5,17 @@ type WebAnalysingRequest struct {
 }
 
 type WebAnalysingResponse struct {
-	HTMLVersion       string        `json:"htmlVersion"`
-	PageTitle         string        `json:"pageTitle"`
-	Heading           HeadingDetail `json:"headings"`
-	InternalLinks     int           `json:"internalLinks"`
-	ExternalLinks     int           `json:"externalLinks"`
-	UnaccessibleLinks int           `json:"unaccessibleLinks"`
-	Error             string        `json:"error"`
+	HTMLVersion string        `json:"htmlVersion"`
+	PageTitle   string        `json:"pageTitle"`
+	Heading     HeadingDetail `json:"headings"`
+	LinksData   WebLinkDetail `json:"linkData"`
+	Error       string        `json:"error"`
+}
+
+type WebLinkDetail struct {
+	InternalLinks     int `json:"internalLinks"`
+	ExternalLinks     int `json:"externalLinks"`
+	UnAccessibleLinks int `json:"unAccessibleLinks"`
 }
 
 type HeadingDetail struct {
