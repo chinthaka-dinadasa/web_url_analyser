@@ -74,7 +74,6 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 			internalLinks++
 		} else {
 			externalLinks++
-			// Check accessibility
 			if !a.isLinkAccessible(linkUrl.String()) {
 				unaccessibleLinks++
 			}
