@@ -77,10 +77,10 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 		if !linkUrl.IsAbs() {
 			linkUrl = base.ResolveReference(linkUrl)
 		}
-		fmt.Printf("Href url %v\n", linkUrl)
+
 		if linkUrl.Host == base.Host {
-			webLinkDetails.UnAccessibleLinks++
-		} else {
+			webLinkDetails.InternalLinks++
+		} else if a.nonEmailLink(linkUrl) {
 			webLinkDetails.ExternalLinks++
 			if !a.isLinkAccessible(linkUrl.String()) {
 				webLinkDetails.UnAccessibleLinks++
@@ -89,6 +89,10 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 
 	})
 	return webLinkDetails
+}
+
+func (a *AnalyserService) nonEmailLink(linkUrl *url.URL) bool {
+	return !strings.Contains(linkUrl.String(), "mailto:")
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
