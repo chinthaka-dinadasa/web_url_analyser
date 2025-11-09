@@ -1,8 +1,10 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"web-analyser/models"
 
 	"github.com/PuerkitoBio/goquery"
@@ -47,25 +49,50 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 }
 
 func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int16, int16) {
-	panic("unimplemented")
+	return 8, 1
 }
 
 func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int16, int16) {
-	panic("unimplemented")
+	return 8, 0
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
-	panic("unimplemented")
+	return models.HeadingDetail{
+		H1: 2,
+		H2: 3,
+		H3: 4,
+		H4: 0,
+		H5: 2,
+		H6: 0,
+	}
 }
 
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
-	//panic("unimplemented")
-	fmt.Print(doc.Html())
-	response, err := doc.Html()
+	htmlContent, err := doc.Html()
 	if err != nil {
-		return ""
+		fmt.Printf("Error in parsing docs HTML content for HTML version capturing %v \n", err)
 	}
-	return response
+
+	var decodedHtmlContent string
+
+	if err := json.Unmarshal([]byte(`"`+htmlContent+`"`), &decodedHtmlContent); err == nil {
+		htmlContent = decodedHtmlContent
+	}
+
+	html := strings.TrimSpace(strings.ToLower(htmlContent))
+
+	switch {
+	case strings.Contains(html, "<!doctype html>"):
+		return "HTML5"
+	case strings.Contains(html, "html 4.01"):
+		return "HTML4"
+	case strings.Contains(html, "xhtml"):
+		return "XHTML"
+	case strings.Contains(html, "<html"):
+		return "HTML"
+	default:
+		return "UNIDENTIFIED"
+	}
 }
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {

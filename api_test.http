@@ -6,5 +6,24 @@ POST http://localhost:8080/process-web-url
 Content-Type: application/json
 
 {
-    "url": "https://facebook.com"
+    "url": "https://javatodev.com"
 }
+###SENDING WEB ANALYSING REQUEST HTML 4
+POST http://localhost:8080/process-web-url
+Content-Type: application/json
+
+{
+    "url": "http://www.w3.org/TR/html401/"
+}
+
+
+###SENDING WEB ANALYSING REQUEST XHTML
+POST http://localhost:8080/process-web-url
+Content-Type: application/json
+
+{
+    "url": "https://www.w3.org/TR/xhtml1/"
+}
+
+
+
