@@ -34,29 +34,26 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	numberOfInternalLinks, numberOfExternalLinks, unaccessibleLinks := a.captureLinksData(targetURL, doc)
+	webLinksData := a.captureLinksData(targetURL, doc)
 
 	result := &models.WebAnalysingResponse{
-		HTMLVersion:       a.captureHTMLVersion(doc),
-		PageTitle:         a.capturePageTitle(doc),
-		Heading:           a.captureHeadingDetails(doc),
-		InternalLinks:     numberOfInternalLinks,
-		ExternalLinks:     numberOfExternalLinks,
-		UnaccessibleLinks: unaccessibleLinks,
+		HTMLVersion: a.captureHTMLVersion(doc),
+		PageTitle:   a.capturePageTitle(doc),
+		Heading:     a.captureHeadingDetails(doc),
+		LinksData:   webLinksData,
 	}
 
 	return result, nil
 }
 
-func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) (int, int, int) {
-	internalLinks := 0
-	externalLinks := 0
-	unaccessibleLinks := 0
+func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) models.WebLinkDetail {
+
 	base, err := url.Parse(baseUrl)
 	if err != nil {
 		fmt.Printf("External link capturing failed %v", err)
 	}
 	fmt.Printf("Base url %v\n", base.Host)
+	var webLinkDetails models.WebLinkDetail
 	doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
 		href, _ := s.Attr("href")
 
@@ -71,16 +68,16 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 		}
 		fmt.Printf("Href url %v\n", linkUrl)
 		if linkUrl.Host == base.Host {
-			internalLinks++
+			webLinkDetails.UnAccessibleLinks++
 		} else {
-			externalLinks++
+			webLinkDetails.ExternalLinks++
 			if !a.isLinkAccessible(linkUrl.String()) {
-				unaccessibleLinks++
+				webLinkDetails.UnAccessibleLinks++
 			}
 		}
 
 	})
-	return internalLinks, externalLinks, unaccessibleLinks
+	return webLinkDetails
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
