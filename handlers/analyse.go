@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"fmt"
+	"net/http"
+	"web-analyser/models"
 	"web-analyser/services"
 
 	"github.com/gin-gonic/gin"
@@ -16,5 +17,14 @@ func NewAnalyseHandler(analyserService *services.AnalyserService) *AnalyseHandle
 }
 
 func (h *AnalyseHandler) AnalyzePage(c *gin.Context) {
-	fmt.Printf("Incoming analysing request through gin setup %v", c)
+
+	var req models.WebAnalysingRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request trying to bind for web analysing request: " + err.Error(),
+		})
+		return
+	}
+
 }
