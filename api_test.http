@@ -1,1 +1,14 @@
-GET http://localhost:8080/ping
+### HEALTH API ENDPOINT
+GET http://localhost:8080/health
+
+###SENDING WEB ANALYSING REQUEST
+POST http://localhost:8080/process-web-url
+Content-Type: application/json
+
+{
+    "url": "https://www.javatodev.com/"
+}
+
+###GET CITY WEATHER
+
+GET http://localhost:3000/weather/london
