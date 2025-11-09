@@ -16,7 +16,7 @@ func NewAnalyserService() *AnalyserService {
 	}
 }
 
-func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.AnalysisResponse, error) {
+func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysingResponse, error) {
 	resp, err := a.client.Get(targetURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)

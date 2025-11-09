@@ -11,7 +11,7 @@ import (
 
 func main() {
 	router := gin.Default()
-	analyser := services.NewHtmlAnalyser()
+	analyser := services.NewAnalyserService()
 	analyseHandler := handlers.NewAnalyseHandler(analyser)
 
 	router.GET("/health", func(c *gin.Context) {

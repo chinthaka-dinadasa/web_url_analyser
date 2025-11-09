@@ -6,5 +6,5 @@ POST http://localhost:8080/process-web-url
 Content-Type: application/json
 
 {
-    "url": ""
+    "url": "https://javatodev.com"
 }

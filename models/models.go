@@ -7,4 +7,5 @@ type WebAnalysingRequest struct {
 type WebAnalysingResponse struct {
 	HTMLVersion string `json:"htmlVersion"`
 	PageTitle   string `json:"pageTitle"`
+	Error       string `json:"error"`
 }

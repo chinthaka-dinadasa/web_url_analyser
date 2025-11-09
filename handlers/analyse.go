@@ -30,7 +30,7 @@ func (h *AnalyseHandler) AnalysePage(c *gin.Context) {
 	result, err := h.analyserService.AnalyserWebUrl(req.Url)
 	if err != nil {
 		// Return error response - no try-catch blocks
-		c.JSON(http.StatusInternalServerError, models.AnalysisResponse{
+		c.JSON(http.StatusInternalServerError, models.WebAnalysingResponse{
 			Error: "Analysis failed: " + err.Error(),
 		})
 		return
