@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"web-analyser/models"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type AnalyserService struct {
@@ -23,10 +25,26 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 	}
 	defer resp.Body.Close()
 
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse HTML: %w", err)
+	}
+
 	result := &models.WebAnalysingResponse{
-		HTMLVersion: "5.0.0",
-		PageTitle:   "Hello",
+		HTMLVersion: a.captureHTMLVersion(doc),
+		PageTitle:   a.capturePageTitle(doc),
 	}
 
 	return result, nil
+}
+
+func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
+	//panic("unimplemented")
+	return "HTML5"
+}
+
+func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
+	//panic("unimplemented")
+	return "Javatodev.com"
 }
