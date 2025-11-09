@@ -16,7 +16,7 @@ func NewAnalyseHandler(analyserService *services.AnalyserService) *AnalyseHandle
 	return &AnalyseHandler{analyserService: analyserService}
 }
 
-func (h *AnalyseHandler) AnalyzePage(c *gin.Context) {
+func (h *AnalyseHandler) AnalysePage(c *gin.Context) {
 
 	var req models.WebAnalysingRequest
 

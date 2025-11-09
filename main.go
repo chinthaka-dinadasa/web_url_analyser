@@ -11,8 +11,8 @@ import (
 
 func main() {
 	router := gin.Default()
-	analyzer := services.NewHtmlAnalyser()
-	analyzeHandler := handlers.NewAnalyseHandler(analyzer)
+	analyser := services.NewHtmlAnalyser()
+	analyseHandler := handlers.NewAnalyseHandler(analyser)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -22,7 +22,7 @@ func main() {
 		})
 	})
 
-	router.POST("/process-web-url", analyzeHandler.AnalyzePage)
+	router.POST("/process-web-url", analyseHandler.AnalysePage)
 
 	router.Run()
 }
