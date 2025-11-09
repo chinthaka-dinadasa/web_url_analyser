@@ -1,13 +1,11 @@
 package handlers
 
-import "net/http"
+import "web-analyser/services"
 
-type HTMLAnlyser struct {
-	client *http.Client
+type AnalyseHadler struct {
+	analyserService *services.AnalyserService
 }
 
-func NewHtmlAnalyser() *HTMLAnlyser {
-	return &HTMLAnlyser{
-		client: &http.Client{},
-	}
+func NewAnalyseHandler(analyserService *services.AnalyserService) *AnalyseHandler {
+	return &AnalyseHandler{analyserService: analyserService}
 }
