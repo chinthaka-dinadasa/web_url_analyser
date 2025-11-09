@@ -1,6 +1,8 @@
 package handlers
 
-import "web-analyser/services"
+import (
+	"web-analyser/services"
+)
 
 type AnalyseHandler struct {
 	analyserService *services.AnalyserService

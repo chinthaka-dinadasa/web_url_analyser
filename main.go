@@ -3,18 +3,10 @@ package main
 import (
 	"net/http"
 	"time"
+	"web-analyser/models"
 
 	"github.com/gin-gonic/gin"
 )
-
-type WebAnalysingRequest struct {
-	Url string `json:"url" binding:"required"`
-}
-
-type WebAnalysingResponse struct {
-	HTMLVersion string `json:"htmlVersion"`
-	PageTitle   string `json:"pageTitle"`
-}
 
 func main() {
 	router := gin.Default()
@@ -33,7 +25,7 @@ func main() {
 }
 
 func processWebUrl(c *gin.Context) {
-	var webAnylysingRequest WebAnalysingRequest
+	var webAnylysingRequest models.WebAnalysingRequest
 	// Bind JSON to struct with validation
 	if err := c.ShouldBindJSON(&webAnylysingRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
