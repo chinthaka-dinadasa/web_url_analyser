@@ -2,7 +2,7 @@ package handlers
 
 import "web-analyser/services"
 
-type AnalyseHadler struct {
+type AnalyseHandler struct {
 	analyserService *services.AnalyserService
 }
 

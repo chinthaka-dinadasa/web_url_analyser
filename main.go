@@ -33,7 +33,7 @@ func main() {
 }
 
 func processWebUrl(c *gin.Context) {
-	var webAnylysingRequest WebsiteAnalysingRequest
+	var webAnylysingRequest WebAnalysingRequest
 	// Bind JSON to struct with validation
 	if err := c.ShouldBindJSON(&webAnylysingRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
