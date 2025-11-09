@@ -126,6 +126,5 @@ func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 }
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
-	//panic("unimplemented")
 	return doc.Find("title").Text()
 }
