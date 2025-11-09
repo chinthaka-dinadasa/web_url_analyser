@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"web-analyser/models"
 
@@ -33,8 +34,7 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	numberOfInternalLinks, unaccessibleInLinks := a.captureInternalLinks(doc)
-	numberOfExternalLinks, unaccessibleExLinks := a.captureExternalLinks(doc)
+	numberOfInternalLinks, numberOfExternalLinks, unaccessibleLinks := a.captureLinksData(targetURL, doc)
 
 	result := &models.WebAnalysingResponse{
 		HTMLVersion:       a.captureHTMLVersion(doc),
@@ -42,19 +42,51 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		Heading:           a.captureHeadingDetails(doc),
 		InternalLinks:     numberOfInternalLinks,
 		ExternalLinks:     numberOfExternalLinks,
-		UnaccessibleLinks: unaccessibleExLinks + unaccessibleInLinks,
+		UnaccessibleLinks: unaccessibleLinks,
 	}
 
 	return result, nil
 }
 
-func (a *AnalyserService) captureExternalLinks(doc *goquery.Document) (int, int) {
+func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) (int, int, int) {
+	internalLinks := 0
+	externalLinks := 0
+	unaccessibleLinks := 0
+	base, err := url.Parse(baseUrl)
+	if err != nil {
+		fmt.Printf("External link capturing failed %v", err)
+	}
+	fmt.Printf("Base url %v\n", base.Host)
+	doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
+		fmt.Printf("Href url %v\n", href)
+		linkUrl, err := url.Parse(href)
+		if err != nil {
+			fmt.Printf("Error in parsing link %v \n", err)
+			return
+		}
 
-	return 8, 1
+		if !linkUrl.IsAbs() {
+			linkUrl = base.ResolveReference(linkUrl)
+		}
+
+		if linkUrl.Host == base.Host {
+			internalLinks++
+		} else {
+			externalLinks++
+			// Check accessibility
+			if !a.isLinkAccessible(linkUrl.String()) {
+				unaccessibleLinks++
+			}
+		}
+
+	})
+	return internalLinks, externalLinks, unaccessibleLinks
 }
 
-func (a *AnalyserService) captureInternalLinks(doc *goquery.Document) (int, int) {
-	return 8, 0
+func (a *AnalyserService) isLinkAccessible(link string) bool {
+	resp, err := a.client.Head(link)
+	return err == nil && resp.StatusCode < 400
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
