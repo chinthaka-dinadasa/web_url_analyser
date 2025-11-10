@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download
+RUN go mod download -x
 
 COPY . .
 
-RUN go build -o main .
+RUN timeout 300 go build -v -o main .
 
 EXPOSE 8080
 
