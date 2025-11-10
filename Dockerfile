@@ -10,7 +10,7 @@ RUN go mod download -x
 
 COPY . .
 
-RUN go build -mod=vendor -v -o main .
+RUN go build -v -o main .
 
 EXPOSE 8080
 
