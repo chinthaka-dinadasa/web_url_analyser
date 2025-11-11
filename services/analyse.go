@@ -46,15 +46,21 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 }
 
 func (a *AnalyserService) captureLoginForm(doc *goquery.Document) bool {
-	foundLoginFormData := false
 
-	if doc.Find("input[type='password']").Length() > 0 {
-		foundLoginFormData = true
+	if doc.Find("form input[type='password' i]").Length() > 0 {
+		return true
 	}
 
-	// TODO: add checks for login form with Login sign in button texts if time permits
+	foundLoginFormData := false
 
+	doc.Find("form").Each(func(i int, form *goquery.Selection) {
+		if form.Find("input[type*='password' i]").Length() > 0 {
+			foundLoginFormData = true
+		}
+	})
+	// TODO: add checks for login form with Login sign in button texts if time permits
 	return foundLoginFormData
+
 }
 
 func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) models.WebLinkDetail {
@@ -80,7 +86,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 
 		if linkUrl.Host == base.Host {
 			webLinkDetails.InternalLinks++
-		} else if a.nonEmailLink(linkUrl) {
+		} else if a.validLinkUrl(linkUrl) {
 			webLinkDetails.ExternalLinks++
 			if !a.isLinkAccessible(linkUrl.String()) {
 				webLinkDetails.UnAccessibleLinks++
@@ -91,8 +97,16 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 	return webLinkDetails
 }
 
-func (a *AnalyserService) nonEmailLink(linkUrl *url.URL) bool {
-	return !strings.Contains(linkUrl.String(), "mailto:")
+func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
+	invalidPrefixes := []string{
+		"mailto:", "javascript:", "tel:", //TODO add more prefixes here.
+	}
+	for _, prefix := range invalidPrefixes {
+		if strings.Contains(strings.ToLower(linkUrl.String()), prefix) {
+			return false
+		}
+	}
+	return true
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
@@ -125,14 +139,14 @@ func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 	}
 
 	html := strings.TrimSpace(strings.ToLower(htmlContent))
-
+	fmt.Printf("Incoming HTML %v", html)
 	switch {
-	case strings.Contains(html, "<!doctype html>"):
-		return "HTML5"
 	case strings.Contains(html, "html 4.01"):
 		return "HTML4"
 	case strings.Contains(html, "xhtml"):
 		return "XHTML"
+	case strings.Contains(html, "<!doctype html"):
+		return "HTML5"
 	case strings.Contains(html, "<html"):
 		return "HTML"
 	default:
