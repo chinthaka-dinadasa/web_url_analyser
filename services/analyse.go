@@ -99,7 +99,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 
 func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
 	invalidPrefixes := []string{
-		"mailto:", "javascript:", "tel:",
+		"mailto:", "javascript:", "tel:", //TODO add more prefixes here.
 	}
 	for _, prefix := range invalidPrefixes {
 		if strings.Contains(strings.ToLower(linkUrl.String()), prefix) {

@@ -245,3 +245,208 @@ func TestAnalyserService_CaptureLinksData(t *testing.T) {
 		})
 	}
 }
+
+func TestAnalyserService_CaptureHeadingDetails(t *testing.T) {
+	analyser := NewAnalyserService()
+	tests := []struct {
+		name     string
+		html     string
+		expected models.HeadingDetail
+	}{
+		{
+			name: "No Headings",
+			html: `<html>
+		        <body>
+		            <a href="/about">About</a>
+		            <a href="/contact">Contact</a>
+		            <a href="#section">Anchor</a>
+		        </body>
+		    </html>`,
+			expected: models.HeadingDetail{
+				H1: 0,
+				H2: 0,
+				H3: 0,
+				H4: 0,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "Single H1 Heading",
+			html: `<html>
+                <body>
+                    <h1>Main Title</h1>
+                    <p>Some content</p>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 0,
+				H3: 0,
+				H4: 0,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "Multiple H1 Headings",
+			html: `<html>
+                <body>
+                    <h1>First H1</h1>
+                    <h1>Second H1</h1>
+                    <h1>Third H1</h1>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 3,
+				H2: 0,
+				H3: 0,
+				H4: 0,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "All Heading Levels",
+			html: `<html>
+                <body>
+                    <h1>Heading 1</h1>
+                    <h2>Heading 2</h2>
+                    <h3>Heading 3</h3>
+                    <h4>Heading 4</h4>
+                    <h5>Heading 5</h5>
+                    <h6>Heading 6</h6>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 1,
+				H3: 1,
+				H4: 1,
+				H5: 1,
+				H6: 1,
+			},
+		},
+		{
+			name: "Mixed Multiple Headings",
+			html: `<html>
+                <body>
+                    <h1>Main Title</h1>
+                    <h2>Section 1</h2>
+                    <h3>Subsection 1.1</h3>
+                    <h3>Subsection 1.2</h3>
+                    <h2>Section 2</h2>
+                    <h3>Subsection 2.1</h3>
+                    <h4>Detail 2.1.1</h4>
+                    <h4>Detail 2.1.2</h4>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 2,
+				H3: 3,
+				H4: 2,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "Headings with Attributes and Classes",
+			html: `<html>
+                <body>
+                    <h1 class="main-title" id="title1">Main Title</h1>
+                    <h2 data-test="section" style="color: red;">Section</h2>
+                    <h3 hidden>Hidden Heading</h3>
+                    <h4 data-count="1">Heading with data</h4>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 1,
+				H3: 1,
+				H4: 1,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "Nested Headings in Divs and Sections",
+			html: `<html>
+                <body>
+                    <div class="header">
+                        <h1>Site Title</h1>
+                    </div>
+                    <main>
+                        <section>
+                            <h2>Article Title</h2>
+                            <div class="content">
+                                <h3>Content Heading</h3>
+                                <article>
+                                    <h4>Sub Heading</h4>
+                                </article>
+                            </div>
+                        </section>
+                    </main>
+                    <footer>
+                        <h5>Footer Heading</h5>
+                    </footer>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 1,
+				H3: 1,
+				H4: 1,
+				H5: 1,
+				H6: 0,
+			},
+		},
+		{
+			name: "Empty Heading Tags",
+			html: `<html>
+                <body>
+                    <h1></h1>
+                    <h2> </h2>
+                    <h3><!-- Comment --></h3>
+                    <h4><span></span></h4>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 1,
+				H3: 1,
+				H4: 1,
+				H5: 0,
+				H6: 0,
+			},
+		},
+		{
+			name: "Malformed Headings",
+			html: `<html>
+                <body>
+                    <h1>Proper H1</h1>
+                    <H2>Uppercase H2</H2>
+                    <h3>Mixed <span>content</span> H3</h3>
+                    <h7>Invalid H7</h7>
+                </body>
+            </html>`,
+			expected: models.HeadingDetail{
+				H1: 1,
+				H2: 1,
+				H3: 1,
+				H4: 0,
+				H5: 0,
+				H6: 0,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tt.html))
+			require.NoError(t, err)
+
+			result := analyser.captureHeadingDetails(doc)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
