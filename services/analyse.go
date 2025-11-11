@@ -47,7 +47,7 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 
 func (a *AnalyserService) captureLoginForm(doc *goquery.Document) bool {
 
-	if doc.Find("form input[type*='password' i]").Length() > 0 {
+	if doc.Find("form input[type='password' i]").Length() > 0 {
 		return true
 	}
 
@@ -86,7 +86,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 
 		if linkUrl.Host == base.Host {
 			webLinkDetails.InternalLinks++
-		} else if a.nonEmailLink(linkUrl) {
+		} else if a.validLinkUrl(linkUrl) {
 			webLinkDetails.ExternalLinks++
 			if !a.isLinkAccessible(linkUrl.String()) {
 				webLinkDetails.UnAccessibleLinks++
@@ -97,8 +97,16 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 	return webLinkDetails
 }
 
-func (a *AnalyserService) nonEmailLink(linkUrl *url.URL) bool {
-	return !strings.Contains(linkUrl.String(), "mailto:")
+func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
+	invalidPrefixes := []string{
+		"mailto:", "javascript:", "tel:",
+	}
+	for _, prefix := range invalidPrefixes {
+		if strings.Contains(strings.ToLower(linkUrl.String()), prefix) {
+			return false
+		}
+	}
+	return true
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {

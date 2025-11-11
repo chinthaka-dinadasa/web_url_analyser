@@ -3,6 +3,7 @@ package services
 import (
 	"strings"
 	"testing"
+	"web-analyser/models"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-playground/assert/v2"
@@ -127,6 +128,119 @@ func TestAnalyserService_CaptureLoginForm(t *testing.T) {
 			require.NoError(t, err)
 
 			result := analyser.captureLoginForm(doc)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestAnalyserService_CaptureLinksData(t *testing.T) {
+	analyser := NewAnalyserService()
+	tests := []struct {
+		name     string
+		html     string
+		baseUrl  string
+		expected models.WebLinkDetail
+	}{
+		{
+			name: "Internal links",
+			html: `<html>
+		        <body>
+		            <a href="/about">About</a>
+		            <a href="/contact">Contact</a>
+		            <a href="#section">Anchor</a>
+		        </body>
+		    </html>`,
+			baseUrl: "https://www.javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     3,
+				ExternalLinks:     0,
+				UnAccessibleLinks: 0,
+			},
+		},
+		{
+			name: "Internal and external links",
+			html: `<html>
+		        <body>
+		            <a href="/about">About</a>
+		            <a href="/contact">Contact</a>
+		            <a href="https://github.com/">Anchor</a>
+		        </body>
+		    </html>`,
+			baseUrl: "https://www.javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     2,
+				ExternalLinks:     1,
+				UnAccessibleLinks: 0,
+			},
+		},
+		{
+			name: "Internal and external links with 404",
+			html: `<html>
+                <body>
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                    <a href="https://noname_757a971d-ac55-4651-8622-17e62b703310393.com">Anchor</a>
+                </body>
+            </html>`,
+			baseUrl: "https://www.javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     2,
+				ExternalLinks:     1,
+				UnAccessibleLinks: 1,
+			},
+		},
+		{
+			name:    "empty page",
+			html:    `<html><body>No links here</body></html>`,
+			baseUrl: "https://javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     0,
+				ExternalLinks:     0,
+				UnAccessibleLinks: 0,
+			},
+		},
+		{
+			name: "links without href",
+			html: `
+            <html>
+                <body>
+                    <a name="anchor">No href</a>
+                    <a>Empty anchor</a>
+                    <a href="/valid">Valid link</a>
+                </body>
+            </html>`,
+			baseUrl: "https://javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     1,
+				ExternalLinks:     0,
+				UnAccessibleLinks: 0,
+			},
+		},
+		{
+			name: "mailto and javascript links",
+			html: `
+            <html>
+                <body>
+                    <a href="mailto:author@javatodev.com">Email</a>
+                    <a href="javascript:void(0)">JS Link</a>
+                    <a href="tel:+1234567890">Phone</a>
+                    <a href="/normal">Normal Link</a>
+                </body>
+            </html>`,
+			baseUrl: "https://javatodev.com",
+			expected: models.WebLinkDetail{
+				InternalLinks:     1,
+				ExternalLinks:     0,
+				UnAccessibleLinks: 0,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tt.html))
+			require.NoError(t, err)
+
+			result := analyser.captureLinksData(tt.baseUrl, doc)
 			assert.Equal(t, tt.expected, result)
 		})
 	}
