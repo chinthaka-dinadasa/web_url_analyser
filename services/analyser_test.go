@@ -179,7 +179,7 @@ func TestAnalyserService_CaptureLinksData(t *testing.T) {
                 <body>
                     <a href="/about">About</a>
                     <a href="/contact">Contact</a>
-                    <a href="https://noname_757a971d-ac55-4651-8622-17e62b703310393.com">Anchor</a>
+                    <a href="https://noname_757a971d-ac55-4651-8622-17e62b703310393.coms">Anchor</a>
                 </body>
             </html>`,
 			baseUrl: "https://www.javatodev.com",
@@ -446,6 +446,66 @@ func TestAnalyserService_CaptureHeadingDetails(t *testing.T) {
 			require.NoError(t, err)
 
 			result := analyser.captureHeadingDetails(doc)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestAnalyserService_CaptureHTMLVersion(t *testing.T) {
+	analyser := NewAnalyserService()
+	tests := []struct {
+		name     string
+		html     string
+		expected string
+	}{
+		{
+			name:     "HTML5 doctype",
+			html:     `<!DOCTYPE html><html><head></head><body></body></html>`,
+			expected: "HTML5",
+		},
+		{
+			name:     "HTML5 doctype with attributes",
+			html:     `<!DOCTYPE html SYSTEM "about:legacy-compat"><html><body></body></html>`,
+			expected: "HTML5",
+		},
+		{
+			name:     "HTML5 lowercase doctype",
+			html:     `<!doctype html><html><body></body></html>`,
+			expected: "HTML5",
+		},
+		{
+			name:     "HTML 4.01 Strict",
+			html:     `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html><body></body></html>`,
+			expected: "HTML4",
+		},
+		{
+			name:     "HTML 4.01 Transitional",
+			html:     `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><body></body></html>`,
+			expected: "HTML4",
+		},
+		{
+			name:     "XHTML 1.0 Strict",
+			html:     `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><body></body></html>`,
+			expected: "XHTML",
+		},
+		{
+			name:     "XHTML 1.1",
+			html:     `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><body></body></html>`,
+			expected: "XHTML",
+		},
+		{
+			name:     "Basic HTML without doctype",
+			html:     `<html><head></head><body>Hello World</body></html>`,
+			expected: "HTML",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tt.html))
+			require.NoError(t, err, "Failed to parse HTML for test: %s", tt.name)
+
+			result := analyser.captureHTMLVersion(doc)
 			assert.Equal(t, tt.expected, result)
 		})
 	}

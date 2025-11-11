@@ -139,14 +139,14 @@ func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 	}
 
 	html := strings.TrimSpace(strings.ToLower(htmlContent))
-
+	fmt.Printf("Incoming HTML %v", html)
 	switch {
-	case strings.Contains(html, "<!doctype html>"):
-		return "HTML5"
 	case strings.Contains(html, "html 4.01"):
 		return "HTML4"
 	case strings.Contains(html, "xhtml"):
 		return "XHTML"
+	case strings.Contains(html, "<!doctype html"):
+		return "HTML5"
 	case strings.Contains(html, "<html"):
 		return "HTML"
 	default:
