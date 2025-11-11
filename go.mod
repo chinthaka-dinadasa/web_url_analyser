@@ -5,8 +5,11 @@ go 1.25.3
 require (
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/gin-gonic/gin v1.11.0
+<<<<<<< HEAD
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/stretchr/testify v1.11.1
+=======
+>>>>>>> main
 )
 
 require (

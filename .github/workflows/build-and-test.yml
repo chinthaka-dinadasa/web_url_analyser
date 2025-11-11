@@ -1,4 +1,4 @@
-name: Golang Web Analyser - Build Flow
+name: Golang Web Analyser - Build / Test Flow
 
 on:
   push:
