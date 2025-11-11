@@ -46,15 +46,21 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 }
 
 func (a *AnalyserService) captureLoginForm(doc *goquery.Document) bool {
-	foundLoginFormData := false
 
-	if doc.Find("input[type='password']").Length() > 0 {
-		foundLoginFormData = true
+	if doc.Find("form input[type*='password' i]").Length() > 0 {
+		return true
 	}
 
-	// TODO: add checks for login form with Login sign in button texts if time permits
+	foundLoginFormData := false
 
+	doc.Find("form").Each(func(i int, form *goquery.Selection) {
+		if form.Find("input[type*='password' i]").Length() > 0 {
+			foundLoginFormData = true
+		}
+	})
+	// TODO: add checks for login form with Login sign in button texts if time permits
 	return foundLoginFormData
+
 }
 
 func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) models.WebLinkDetail {
