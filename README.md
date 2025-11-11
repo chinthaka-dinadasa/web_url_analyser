@@ -2,3 +2,16 @@
 
 ## Web Analyser API
 
+### Commands
+
+Run Application
+
+```bash
+go run main.go
+```
+
+Test with Coverage
+
+```bash
+go test -cover -v ./...
+```
