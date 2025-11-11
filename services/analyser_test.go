@@ -21,6 +21,16 @@ func TestHtmlAnalyser_PageTitleExtraction(t *testing.T) {
 			html:     `<html><head><title>Test Page</title></head><body></body></html>`,
 			expected: "Test Page",
 		},
+		{
+			name:     "basic title",
+			html:     `<title>Random</title>`,
+			expected: "Random",
+		},
+		{
+			name:     "basic title",
+			html:     `<html>hello</html>`,
+			expected: "",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
