@@ -6,7 +6,10 @@ COPY go.mod go.sum ./
 
 RUN go mod download -x
 
-COPY handlers models services ./
+COPY main.go ./
+COPY handlers/ ./handlers/
+COPY models/ ./models/
+COPY services/ ./services/
 
 RUN go build -v -o main .
 
