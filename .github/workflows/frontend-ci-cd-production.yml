@@ -1,14 +1,10 @@
-name: Build and Push Docker Frontend
+name: Next JS Frontend - CI Prod
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -38,19 +34,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for ${{ matrix.project.name }}
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.project.image-tag }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image for ${{ matrix.project.name }}
         uses: docker/build-push-action@v5
