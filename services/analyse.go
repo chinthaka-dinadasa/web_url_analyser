@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"web-analyser/logger"
 	"web-analyser/models"
 
 	"github.com/PuerkitoBio/goquery"
@@ -26,9 +27,11 @@ func NewAnalyserService() *AnalyserService {
 
 func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysingResponse, error) {
 
+	logger.Info("Analysing......", "url", targetURL)
+
 	data := a.cache.Get(targetURL)
 	if data != nil {
-		fmt.Printf("Return from cache %v", data)
+		logger.Debug("Cache hit", "url", targetURL)
 		return data, nil
 	}
 
@@ -78,34 +81,36 @@ func (a *AnalyserService) captureLoginForm(doc *goquery.Document) bool {
 func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document) models.WebLinkDetail {
 
 	base, err := url.Parse(baseUrl)
-	if err != nil {
-		fmt.Printf("External link capturing failed %v", err)
-	}
-	fmt.Printf("Base url %v\n", base.Host)
+
 	var webLinkDetails models.WebLinkDetail
-	doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
-		href, _ := s.Attr("href")
+	if err != nil {
+		logger.Error("External Link capturing failed", "err", err)
+	} else {
+		doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
+			href, _ := s.Attr("href")
 
-		linkUrl, err := url.Parse(href)
-		if err != nil {
-			fmt.Printf("Error in parsing link %v \n", err)
-			return
-		}
-
-		if !linkUrl.IsAbs() {
-			linkUrl = base.ResolveReference(linkUrl)
-		}
-
-		if linkUrl.Host == base.Host {
-			webLinkDetails.InternalLinks++
-		} else if a.validLinkUrl(linkUrl) {
-			webLinkDetails.ExternalLinks++
-			if !a.isLinkAccessible(linkUrl.String()) {
-				webLinkDetails.UnAccessibleLinks++
+			linkUrl, err := url.Parse(href)
+			if err != nil {
+				logger.Error("Error in parsing link", "link", href, "err", err)
+				return
 			}
-		}
 
-	})
+			if !linkUrl.IsAbs() {
+				linkUrl = base.ResolveReference(linkUrl)
+			}
+
+			if linkUrl.Host == base.Host {
+				webLinkDetails.InternalLinks++
+			} else if a.validLinkUrl(linkUrl) {
+				webLinkDetails.ExternalLinks++
+				if !a.isLinkAccessible(linkUrl.String()) {
+					webLinkDetails.UnAccessibleLinks++
+				}
+			}
+
+		})
+	}
+
 	return webLinkDetails
 }
 
@@ -123,7 +128,6 @@ func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
 	_, err := a.client.Get(link)
-	fmt.Printf("Data comming from link accessibilty test %v", err)
 	return err == nil
 }
 
@@ -141,7 +145,7 @@ func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.He
 func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 	htmlContent, err := doc.Html()
 	if err != nil {
-		fmt.Printf("Error in parsing docs HTML content for HTML version capturing %v \n", err)
+		logger.Error("Error in parsing docs HTML content for HTML version capturing", "err", err)
 	}
 
 	var decodedHtmlContent string
@@ -151,7 +155,7 @@ func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 	}
 
 	html := strings.TrimSpace(strings.ToLower(htmlContent))
-	fmt.Printf("Incoming HTML %v", html)
+
 	switch {
 	case strings.Contains(html, "html 4.01"):
 		return "HTML4"
