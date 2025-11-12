@@ -25,8 +25,11 @@ export default function Home() {
   const [url, setUrl] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<AnalysisResponse | null>(null)
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     if (!url.trim()) {
       setError('Please enter a URL')
       return
@@ -39,9 +42,11 @@ export default function Home() {
       setError('Please enter a valid URL')
       return
     }
+    setError(null)
+    setResult(null)
 
     try {
-      const response = await fetch('http://localhost:8080/process-web-url', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,11 +63,11 @@ export default function Home() {
       if (data.error) {
         throw new Error(data.error)
       }
-
+      console.log(`Data Loaded from API ${JSON.stringify(data)}`)
       setResult(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze URL')
-    } 
+    }
 
   }
   return (
@@ -104,6 +109,76 @@ export default function Home() {
             </div>
           </form>
         </div>
+        {result && (
+          <div>
+            <h2 className="text-xl font-bold text-green-900 mb-6">Analysis Results</h2>
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-red-700">Basic Informations</h3>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">HTML Version:</span>
+                    <span className="font-medium text-green-700">{result.htmlVersion}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Page Title:</span>
+                    <span className="font-medium text-green-700">{result.pageTitle}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Login Form Availability:</span>
+                    <span className="font-medium text-green-700">{result.loginFormAvailability}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-red-700">Headings Informations</h3>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H1:</span>
+                    <span className="font-medium text-green-700">{result.headings.h1}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H2:</span>
+                    <span className="font-medium text-green-700">{result.headings.h2}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H3:</span>
+                    <span className="font-medium text-green-700">{result.headings.h3}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H4:</span>
+                    <span className="font-medium text-green-700">{result.headings.h4}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H5:</span>
+                    <span className="font-medium text-green-700">{result.headings.h5}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">H6:</span>
+                    <span className="font-medium text-green-700">{result.headings.h6}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-red-700">Link Informations</h3>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Internal Links:</span>
+                    <span className="font-medium text-green-700">{result.linkData.internalLinks}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">External Links:</span>
+                    <span className="font-medium text-green-700">{result.linkData.externalLinks}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Unaccessible Links:</span>
+                    <span className="font-medium text-green-700">{result.linkData.unAccessibleLinks}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
 
