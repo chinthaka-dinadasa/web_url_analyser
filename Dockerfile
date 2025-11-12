@@ -10,6 +10,7 @@ COPY main.go ./
 COPY handlers/ ./handlers/
 COPY models/ ./models/
 COPY services/ ./services/
+COPY logger/ ./logger/
 
 RUN go build -v -o main .
 
