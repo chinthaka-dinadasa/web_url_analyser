@@ -6,7 +6,7 @@ POST http://localhost:8080/process-web-url
 Content-Type: application/json
 
 {
-    "url": "https://dashboard.socialic.app"
+    "url": "https://javatodev.com"
 }
 ###SENDING WEB ANALYSING REQUEST HTML 4
 POST http://localhost:8080/process-web-url

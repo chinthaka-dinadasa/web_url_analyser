@@ -13,15 +13,25 @@ import (
 
 type AnalyserService struct {
 	client *http.Client
+	cache  *SimpleCache
 }
 
 func NewAnalyserService() *AnalyserService {
+	cache := NewSimpleCache()
 	return &AnalyserService{
 		client: &http.Client{},
+		cache:  cache,
 	}
 }
 
 func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysingResponse, error) {
+
+	data := a.cache.Get(targetURL)
+	if data != nil {
+		fmt.Printf("Return from cache %v", data)
+		return data, nil
+	}
+
 	resp, err := a.client.Get(targetURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)
@@ -41,6 +51,8 @@ func (a *AnalyserService) AnalyserWebUrl(targetURL string) (*models.WebAnalysing
 		LinksData:             a.captureLinksData(targetURL, doc),
 		LoginFormAvailability: a.captureLoginForm(doc),
 	}
+
+	a.cache.Set(targetURL, result)
 
 	return result, nil
 }
