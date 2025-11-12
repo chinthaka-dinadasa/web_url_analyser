@@ -1,9 +1,68 @@
 'use client'
 import { useState } from "react";
 
+interface AnalysisResponse {
+  htmlVersion: string
+  pageTitle: string
+  headings: {
+    h1: number
+    h2: number
+    h3: number
+    h4: number
+    h5: number
+    h6: number
+  }
+  linkData: {
+    internalLinks: number
+    externalLinks: number
+    unAccessibleLinks: number
+  }
+  loginFormAvailability: boolean
+  error?: string
+}
+
 export default function Home() {
   const [url, setUrl] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<AnalysisResponse | null>(null)
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!url.trim()) {
+      setError('Please enter a URL')
+      return
+    }
+
+    // Basic URL validation
+    try {
+      new URL(url)
+    } catch {
+      setError('Please enter a valid URL')
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/process-web-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url.trim() }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data: AnalysisResponse = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      setResult(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to analyze URL')
+    } 
 
   }
   return (
@@ -29,14 +88,19 @@ export default function Home() {
                 placeholder="https://example.com"
                 className="w-full px-3 py-2 border border-gray-300"
               />
-             <div className="flex gap-20">
- <button
-                type="submit"
-                className="flex-1 bg-blue-600 text-white py-2 px-4"
-              >
+              <div className="flex gap-20">
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 text-white py-2 px-4"
+                >
                   Analyze Website
-              </button>
-             </div>
+                </button>
+              </div>
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  {error}
+                </div>
+              )}
             </div>
           </form>
         </div>
