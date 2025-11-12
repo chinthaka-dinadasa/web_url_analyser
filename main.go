@@ -14,7 +14,7 @@ func main() {
 	router := gin.Default()
 	analyser := services.NewAnalyserService()
 	analyseHandler := handlers.NewAnalyseHandler(analyser)
-	router.Use(cors.Default())
+	router.Use(cors.Default()) //TODO setup cors with ENV based origin.
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"health":      "up",
