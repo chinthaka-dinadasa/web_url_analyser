@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-analyser-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      - GIN_MODE=${GIN_MODE:-release}
+    networks:
+      - web-analyser-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend/web-analyser-web
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_APP_API_URL=${NEXT_PUBLIC_APP_API_URL:-http://localhost:8080/process-web-url}
+    container_name: web-analyser-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - web-analyser-network
+    restart: unless-stopped
+
+networks:
+  web-analyser-network:
+    driver: bridge
+
