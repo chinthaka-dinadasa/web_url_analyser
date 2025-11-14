@@ -17,7 +17,7 @@ interface AnalysisResponse {
     externalLinks: number
     unAccessibleLinks: number
   }
-  loginFormAvailability: string
+  loginFormAvailability: boolean
   error?: string
 }
 
