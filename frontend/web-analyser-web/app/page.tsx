@@ -17,7 +17,7 @@ interface AnalysisResponse {
     externalLinks: number
     unAccessibleLinks: number
   }
-  loginFormAvailability: boolean
+  loginFormAvailability: string
   error?: string
 }
 
@@ -126,7 +126,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-blue-700">Login Form Availability:</span>
-                    <span className="font-medium text-green-700">{result.loginFormAvailability}</span>
+                    <span className="font-medium text-green-700">{result.loginFormAvailability ? 'Available' : 'Not Available'}</span>
                   </div>
                 </div>
               </div>
