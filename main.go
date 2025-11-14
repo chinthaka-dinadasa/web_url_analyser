@@ -5,6 +5,7 @@ import (
 	"time"
 	"web-analyser/handlers"
 	"web-analyser/logger"
+	"web-analyser/models"
 	"web-analyser/services"
 
 	"github.com/gin-contrib/cors"
@@ -15,9 +16,9 @@ func main() {
 	logger.InitLogger()
 
 	router := gin.Default()
-
-	analyser := services.NewAnalyserService()
-	analyseHandler := handlers.NewAnalyseHandler(analyser)
+	config := models.LoadConfig()
+	analyser := services.NewAnalyserService(config.CacheTtl)
+	analyseHandler := handlers.NewAnalyseHandler(analyser, config.MaxWorkers)
 
 	router.Use(cors.Default()) //TODO setup cors with ENV based origin.
 
@@ -31,6 +32,6 @@ func main() {
 
 	router.POST("/process-web-url", analyseHandler.AnalysePage)
 
-	logger.Info("Server starting on default port :8080")
-	router.Run(":8080")
+	logger.Info("Server starting on default port", config.Port)
+	router.Run(":" + config.Port)
 }

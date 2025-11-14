@@ -8,6 +8,13 @@ Content-Type: application/json
 {
     "url": "https://javatodev.com"
 }
+###SENDING WEB ANALYSING REQUEST
+POST http://localhost:8080/process-web-url
+Content-Type: application/json
+
+{
+    "url": "https://ikman.lk"
+}
 ###SENDING WEB ANALYSING REQUEST HTML 4
 POST http://localhost:8080/process-web-url
 Content-Type: application/json

@@ -4,6 +4,8 @@
 
 ## Web Analyser API
 
+![application run demo](ezgif-6de383e0f5eb32bc.gif)
+
 ### Commands
 
 Run Application
