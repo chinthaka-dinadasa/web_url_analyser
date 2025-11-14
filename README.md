@@ -38,6 +38,15 @@ npm run dev
 
 ```
 
+### How to run the application - Using Docker Compose
+
+```bash
+docker-compose build
+
+docker-compose up 
+
+```
+
 ### Test Golang Code with Coverage
 
 ```bash
