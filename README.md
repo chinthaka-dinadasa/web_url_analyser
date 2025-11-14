@@ -85,3 +85,5 @@ k6 run load_test.js
 
 Most of the websites block application when running tests with urls. (Eg:- Facebook )
 Url accessibility check getting longer time since it should check one by one with real responses. this getting application bit slower to respond.
+
+Github actions take little longer to download necessary golang dependencies compared to local docker build. Normally Github actions take 10-15 minutes to complete docker build in the meanwhile same source code took around 20-30 seconds to build on local.
