@@ -12,7 +12,7 @@ Clone the Repo
 
 Environment Variables
 
-```
+```bash
 PORT=8080
 MAX_WORKERS=50
 CACHE_TTL=1 //Hours
@@ -32,7 +32,7 @@ Environment variables
 NEXT_PUBLIC_APP_API_URL=http://localhost:8080/process-web-url
 ```
 
-```
+```bash
 npm install
 npm run dev
 
