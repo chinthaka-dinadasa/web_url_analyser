@@ -56,9 +56,9 @@ docker-compose up
 
 ### Access URL's
 
-Application API - [http://localhost:8080](http://localhost:8080)
-Frontend - [http://localhost:3000](http://localhost:3000)
-Swagger Documentation - [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+- Application API - [http://localhost:8080/health](http://localhost:8080/health)
+- Frontend - [http://localhost:3000](http://localhost:3000)
+- Swagger Documentation - [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
 ### Test Golang Code with Coverage
 
