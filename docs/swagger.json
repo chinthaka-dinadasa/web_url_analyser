@@ -1,0 +1,118 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Web analyser API developed using Golang",
+        "title": "Web Analyser API - Golang",
+        "contact": {
+            "name": "Chinthaka D"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/process-web-url": {
+            "post": {
+                "description": "Analyse web url for given URL from API",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Analyse Web URL",
+                "parameters": [
+                    {
+                        "description": "Web Url Data",
+                        "name": "analyser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.WebAnalysingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.WebAnalysingResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.HeadingDetail": {
+            "type": "object",
+            "properties": {
+                "h1": {
+                    "type": "integer"
+                },
+                "h2": {
+                    "type": "integer"
+                },
+                "h3": {
+                    "type": "integer"
+                },
+                "h4": {
+                    "type": "integer"
+                },
+                "h5": {
+                    "type": "integer"
+                },
+                "h6": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.WebAnalysingRequest": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.WebAnalysingResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "headings": {
+                    "$ref": "#/definitions/models.HeadingDetail"
+                },
+                "htmlVersion": {
+                    "type": "string"
+                },
+                "linkData": {
+                    "$ref": "#/definitions/models.WebLinkDetail"
+                },
+                "loginFormAvailability": {
+                    "type": "boolean"
+                },
+                "pageTitle": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.WebLinkDetail": {
+            "type": "object",
+            "properties": {
+                "externalLinks": {
+                    "type": "integer"
+                },
+                "internalLinks": {
+                    "type": "integer"
+                },
+                "unAccessibleLinks": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

@@ -12,6 +12,7 @@ This source code includes simple web url analyser which analyse incoming URL. Ba
 
 - Gin [https://gin-gonic.com/](https://gin-gonic.com/)
 - goquery [https://github.com/PuerkitoBio/goquery](https://github.com/PuerkitoBio/goquery)
+- Swagger [https://swagger.io/](https://swagger.io/)
 
 ![application run demo](ezgif-6de383e0f5eb32bc.gif)
 
@@ -53,6 +54,12 @@ docker-compose build
 docker-compose up 
 ```
 
+### Access URL's
+
+- Application API - [http://localhost:8080/health](http://localhost:8080/health)
+- Frontend - [http://localhost:3000](http://localhost:3000)
+- Swagger Documentation - [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+
 ### Test Golang Code with Coverage
 
 ```bash
@@ -65,6 +72,7 @@ go test -cover -v ./...
 - Cors - Gin Cors
 - HTTP - Gin
 - Load testing - k6
+- API documentation - Swagger
 
 ### Challenges
 
