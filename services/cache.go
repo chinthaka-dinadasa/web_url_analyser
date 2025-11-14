@@ -13,11 +13,11 @@ type SimpleCache struct {
 	ttl   time.Duration
 }
 
-func NewSimpleCache() *SimpleCache {
+func NewSimpleCache(ttl int) *SimpleCache {
 	return &SimpleCache{
 		data:  make(map[string]*models.WebAnalysingResponse),
 		times: make(map[string]time.Time),
-		ttl:   1 * time.Hour, //TODO move this to ENV when adding env part
+		ttl:   time.Duration(ttl) * time.Hour,
 	}
 }
 

@@ -17,8 +17,8 @@ type AnalyserService struct {
 	cache  *SimpleCache
 }
 
-func NewAnalyserService() *AnalyserService {
-	cache := NewSimpleCache()
+func NewAnalyserService(ttl int) *AnalyserService {
+	cache := NewSimpleCache(ttl)
 	return &AnalyserService{
 		client: &http.Client{},
 		cache:  cache,

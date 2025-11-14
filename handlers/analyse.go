@@ -10,10 +10,14 @@ import (
 
 type AnalyseHandler struct {
 	analyserService *services.AnalyserService
+	workerPool      chan struct{}
 }
 
-func NewAnalyseHandler(analyserService *services.AnalyserService) *AnalyseHandler {
-	return &AnalyseHandler{analyserService: analyserService}
+func NewAnalyseHandler(analyserService *services.AnalyserService, maxWorkers int) *AnalyseHandler {
+	return &AnalyseHandler{
+		analyserService: analyserService,
+		workerPool:      make(chan struct{}, maxWorkers),
+	}
 }
 
 func (h *AnalyseHandler) AnalysePage(c *gin.Context) {
@@ -23,6 +27,16 @@ func (h *AnalyseHandler) AnalysePage(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request trying to bind for web analysing request: " + err.Error(),
+		})
+		return
+	}
+
+	select {
+	case h.workerPool <- struct{}{}:
+		defer func() { <-h.workerPool }()
+	default:
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"error": "Server busy, please try again later",
 		})
 		return
 	}
