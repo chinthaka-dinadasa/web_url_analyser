@@ -60,10 +60,17 @@ docker-compose up
 - Frontend - [http://localhost:3000](http://localhost:3000)
 - Swagger Documentation - [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
-### Test Golang Code with Coverage
+### Run Test Golang with Coverage
 
 ```bash
 go test -cover -v ./...
+```
+
+### Run Load testing with K6
+
+```bash
+cd load_test_scripts
+k6 run load_test.js
 ```
 
 ### Application main components
