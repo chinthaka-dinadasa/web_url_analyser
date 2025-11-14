@@ -11,6 +11,7 @@ COPY handlers/ ./handlers/
 COPY models/ ./models/
 COPY services/ ./services/
 COPY logger/ ./logger/
+COPY docs/ ./docs/
 
 RUN go build -v -o main .
 
