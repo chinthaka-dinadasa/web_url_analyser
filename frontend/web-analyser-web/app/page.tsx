@@ -25,6 +25,7 @@ export default function Home() {
   const [url, setUrl] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<AnalysisResponse | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,6 +45,7 @@ export default function Home() {
     }
     setError(null)
     setResult(null)
+    setLoading(true)
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_URL}`, {
@@ -67,6 +69,8 @@ export default function Home() {
       setResult(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze URL')
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -97,8 +101,9 @@ export default function Home() {
                 <button
                   type="submit"
                   className="flex-1 bg-blue-600 text-white py-2 px-4"
+                  disabled={loading} 
                 >
-                  Analyze Website
+                  {loading ? 'Analysing...': 'Analyse Website'}
                 </button>
               </div>
               {error && (
