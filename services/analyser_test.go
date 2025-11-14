@@ -11,7 +11,7 @@ import (
 )
 
 func TestAnalyserService_PageTitleExtraction(t *testing.T) {
-	analyser := NewAnalyserService()
+	analyser := NewAnalyserService(1)
 	tests := []struct {
 		name     string
 		html     string
@@ -45,7 +45,7 @@ func TestAnalyserService_PageTitleExtraction(t *testing.T) {
 }
 
 func TestAnalyserService_CaptureLoginForm(t *testing.T) {
-	analyser := NewAnalyserService()
+	analyser := NewAnalyserService(1)
 	tests := []struct {
 		name     string
 		html     string
@@ -134,7 +134,7 @@ func TestAnalyserService_CaptureLoginForm(t *testing.T) {
 }
 
 func TestAnalyserService_CaptureLinksData(t *testing.T) {
-	analyser := NewAnalyserService()
+	analyser := NewAnalyserService(1)
 	tests := []struct {
 		name     string
 		html     string
@@ -247,7 +247,7 @@ func TestAnalyserService_CaptureLinksData(t *testing.T) {
 }
 
 func TestAnalyserService_CaptureHeadingDetails(t *testing.T) {
-	analyser := NewAnalyserService()
+	analyser := NewAnalyserService(1)
 	tests := []struct {
 		name     string
 		html     string
@@ -452,7 +452,7 @@ func TestAnalyserService_CaptureHeadingDetails(t *testing.T) {
 }
 
 func TestAnalyserService_CaptureHTMLVersion(t *testing.T) {
-	analyser := NewAnalyserService()
+	analyser := NewAnalyserService(1)
 	tests := []struct {
 		name     string
 		html     string
