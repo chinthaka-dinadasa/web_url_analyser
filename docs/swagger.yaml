@@ -1,0 +1,76 @@
+definitions:
+  models.HeadingDetail:
+    properties:
+      h1:
+        type: integer
+      h2:
+        type: integer
+      h3:
+        type: integer
+      h4:
+        type: integer
+      h5:
+        type: integer
+      h6:
+        type: integer
+    type: object
+  models.WebAnalysingRequest:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  models.WebAnalysingResponse:
+    properties:
+      error:
+        type: string
+      headings:
+        $ref: '#/definitions/models.HeadingDetail'
+      htmlVersion:
+        type: string
+      linkData:
+        $ref: '#/definitions/models.WebLinkDetail'
+      loginFormAvailability:
+        type: boolean
+      pageTitle:
+        type: string
+    type: object
+  models.WebLinkDetail:
+    properties:
+      externalLinks:
+        type: integer
+      internalLinks:
+        type: integer
+      unAccessibleLinks:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Chinthaka D
+  description: Web analyser API developed using Golang
+  title: Web Analyser API - Golang
+  version: "1.0"
+paths:
+  /process-web-url:
+    post:
+      consumes:
+      - application/json
+      description: Analyse web url for given URL from API
+      parameters:
+      - description: Web Url Data
+        in: body
+        name: analyser
+        required: true
+        schema:
+          $ref: '#/definitions/models.WebAnalysingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.WebAnalysingResponse'
+      summary: Analyse Web URL
+swagger: "2.0"

@@ -20,6 +20,14 @@ func NewAnalyseHandler(analyserService *services.AnalyserService, maxWorkers int
 	}
 }
 
+// AnalysePage godoc
+// @Summary Analyse Web URL
+// @Description Analyse web url for given URL from API
+// @Param analyser body models.WebAnalysingRequest true "Web Url Data"
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.WebAnalysingResponse
+// @Router /process-web-url [post]
 func (h *AnalyseHandler) AnalysePage(c *gin.Context) {
 
 	var req models.WebAnalysingRequest
