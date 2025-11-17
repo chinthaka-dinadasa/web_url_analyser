@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"web-analyser/logger"
 	"web-analyser/models"
 
@@ -86,6 +87,7 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 	if err != nil {
 		logger.Error("External Link capturing failed", "err", err)
 	} else {
+		externalLinks := []string{}
 		doc.Find("a[href]").Each(func(i int, s *goquery.Selection) {
 			href, _ := s.Attr("href")
 
@@ -103,12 +105,20 @@ func (a *AnalyserService) captureLinksData(baseUrl string, doc *goquery.Document
 				webLinkDetails.InternalLinks++
 			} else if a.validLinkUrl(linkUrl) {
 				webLinkDetails.ExternalLinks++
-				if !a.isLinkAccessible(linkUrl.String()) {
-					webLinkDetails.UnAccessibleLinks++
-				}
+				externalLinks = append(externalLinks, linkUrl.String())
 			}
 
 		})
+
+		if len(externalLinks) > 0 {
+			accessibilityResults := a.checkExternalLinkAccessibility(externalLinks)
+			for _, accessible := range accessibilityResults {
+				if !accessible {
+					webLinkDetails.UnAccessibleLinks++
+				}
+			}
+		}
+
 	}
 
 	return webLinkDetails
@@ -127,13 +137,26 @@ func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
-	resp, err := a.client.Get(link)
-	if err != nil {
-		return false
+
+	maxRetries := 3
+	for attmpt := 1; attmpt <= maxRetries; attmpt++ {
+		resp, err := a.client.Get(link)
+		if err == nil && resp != nil {
+			defer resp.Body.Close()
+			if resp.StatusCode < 400 {
+				fmt.Printf("Success: GET URL %v - %v attempt %d\n", link, resp.StatusCode, attmpt)
+				return true
+			}
+		} else {
+			fmt.Printf("Failed: GET URL %v - attempt %d\n", link, attmpt)
+		}
+
+		if attmpt < maxRetries {
+			fmt.Printf("Retrying: GET URL %v failed (attempt %d) - Error: %v\n", link, attmpt, err)
+		}
 	}
-	defer resp.Body.Close()
-	fmt.Printf("Response from GET URL %v - %v\n", link, resp.StatusCode)
-	return resp.StatusCode < 400
+	fmt.Printf("Failed: GET URL %v after %d attempts\n", link, maxRetries)
+	return false
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
@@ -177,4 +200,34 @@ func (a *AnalyserService) captureHTMLVersion(doc *goquery.Document) string {
 
 func (a *AnalyserService) capturePageTitle(doc *goquery.Document) string {
 	return doc.Find("title").Text()
+}
+
+func (a *AnalyserService) checkExternalLinkAccessibility(links []string) map[string]bool {
+	results := make(map[string]bool)
+	var mutex sync.Mutex
+	var wg sync.WaitGroup
+
+	numberOfWorkrs := 5
+	linkScanChannel := make(chan string, len(links))
+
+	for range numberOfWorkrs {
+		wg.Go(func() {
+			for link := range linkScanChannel {
+				isAccessible := a.isLinkAccessible(link)
+				mutex.Lock()
+
+				results[link] = isAccessible
+				mutex.Unlock()
+
+			}
+		})
+	}
+
+	for _, link := range links {
+		linkScanChannel <- link
+	}
+
+	close(linkScanChannel)
+	wg.Wait()
+	return results
 }
