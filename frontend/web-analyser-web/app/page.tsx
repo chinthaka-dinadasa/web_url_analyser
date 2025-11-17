@@ -95,12 +95,12 @@ export default function Home() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="w-full px-3 py-2 border border-gray-300"
+                className="w-full px-3 py-2 border border-gray-300 text-gray-900 bg-white mb-5 rounded"
               />
               <div className="flex gap-20">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 px-4"
+                  className="w-1/4 bg-green-600 text-white py-2 px-4 mb-5 mx-auto block rounded"
                   disabled={loading} 
                 >
                   {loading ? 'Analysing...': 'Analyse Website'}
@@ -117,49 +117,50 @@ export default function Home() {
         {result && (
           <div>
             <h2 className="text-xl font-bold text-green-900 mb-6">Analysis Results</h2>
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
               <div className="space-y-4">
                 <h3 className="text-red-700">Basic Informations</h3>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="flex justify-between">
-                    <span className="text-blue-700">HTML Version:</span>
-                    <span className="font-medium text-green-700">{result.htmlVersion}</span>
+                    <span className="text-blue-700 w-1/4">HTML Version:</span>
+                    <span className="font-medium text-green-700  w-3/4">{result.htmlVersion}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">Page Title:</span>
-                    <span className="font-medium text-green-700">{result.pageTitle}</span>
+                    <span className="text-blue-700 w-1/4">Page Title:</span>
+                    <span className="font-medium text-green-700  w-3/4">{result.pageTitle}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">Login Form Availability:</span>
-                    <span className="font-medium text-green-700">{result.loginFormAvailability ? 'Available' : 'Not Available'}</span>
+                    <span className="text-blue-700 w-1/4">Login Form Availability:</span>
+                    <span className="font-medium text-green-700  w-3/4">{result.loginFormAvailability ? 'Available' : 'Not Available'}</span>
                   </div>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                 <h3 className="text-red-700">Headings Informations</h3>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H1:</span>
+                    <span className="text-blue-700 w-2/4">H1:</span>
                     <span className="font-medium text-green-700">{result.headings.h1}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H2:</span>
+                    <span className="text-blue-700 w-2/4">H2:</span>
                     <span className="font-medium text-green-700">{result.headings.h2}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H3:</span>
+                    <span className="text-blue-700 w-2/4">H3:</span>
                     <span className="font-medium text-green-700">{result.headings.h3}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H4:</span>
+                    <span className="text-blue-700 w-2/4">H4:</span>
                     <span className="font-medium text-green-700">{result.headings.h4}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H5:</span>
+                    <span className="text-blue-700 w-2/4">H5:</span>
                     <span className="font-medium text-green-700">{result.headings.h5}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">H6:</span>
+                    <span className="text-blue-700 w-2/4">H6:</span>
                     <span className="font-medium text-green-700">{result.headings.h6}</span>
                   </div>
                 </div>
@@ -168,18 +169,19 @@ export default function Home() {
                 <h3 className="text-red-700">Link Informations</h3>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="flex justify-between">
-                    <span className="text-blue-700">Internal Links:</span>
+                    <span className="text-blue-700 w-2/4">Internal Links:</span>
                     <span className="font-medium text-green-700">{result.linkData.internalLinks}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">External Links:</span>
+                    <span className="text-blue-700 w-2/4">External Links:</span>
                     <span className="font-medium text-green-700">{result.linkData.externalLinks}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700">Unaccessible Links:</span>
+                    <span className="text-blue-700 w-2/4">Unaccessible Links:</span>
                     <span className="font-medium text-green-700">{result.linkData.unAccessibleLinks}</span>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
