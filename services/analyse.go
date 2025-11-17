@@ -127,8 +127,13 @@ func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
-	_, err := a.client.Get(link)
-	return err == nil
+	resp, err := a.client.Get(link)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+	fmt.Printf("Response from GET URL %v - %v\n", link, resp.StatusCode)
+	return resp.StatusCode < 400
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {
