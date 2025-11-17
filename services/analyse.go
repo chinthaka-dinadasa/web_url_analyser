@@ -137,13 +137,26 @@ func (a *AnalyserService) validLinkUrl(linkUrl *url.URL) bool {
 }
 
 func (a *AnalyserService) isLinkAccessible(link string) bool {
-	resp, err := a.client.Get(link)
-	if err != nil {
-		return false
+
+	maxRetries := 3
+	for attmpt := 1; attmpt <= maxRetries; attmpt++ {
+		resp, err := a.client.Get(link)
+		if err == nil && resp != nil {
+			defer resp.Body.Close()
+			if resp.StatusCode < 400 {
+				fmt.Printf("Success: GET URL %v - %v attempt %d\n", link, resp.StatusCode, attmpt)
+				return true
+			}
+		} else {
+			fmt.Printf("Failed: GET URL %v - attempt %d\n", link, attmpt)
+		}
+
+		if attmpt < maxRetries {
+			fmt.Printf("Retrying: GET URL %v failed (attempt %d) - Error: %v\n", link, attmpt, err)
+		}
 	}
-	defer resp.Body.Close()
-	fmt.Printf("Response from GET URL %v - %v\n", link, resp.StatusCode)
-	return resp.StatusCode < 400
+	fmt.Printf("Failed: GET URL %v after %d attempts\n", link, maxRetries)
+	return false
 }
 
 func (a *AnalyserService) captureHeadingDetails(doc *goquery.Document) models.HeadingDetail {

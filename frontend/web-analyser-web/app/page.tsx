@@ -56,14 +56,13 @@ export default function Home() {
         body: JSON.stringify({ url: url.trim() }),
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
       const data: AnalysisResponse = await response.json()
 
       if (data.error) {
         throw new Error(data.error)
+      } else if (!response.ok) {
+        //unhandled error scenario
+        throw new Error(`Error processing request with Backend system. Please wait and retry.`)
       }
       console.log(`Data Loaded from API ${JSON.stringify(data)}`)
       setResult(data)
