@@ -14,13 +14,13 @@ This source code includes simple web url analyser which analyse incoming URL. Ba
 - goquery [https://github.com/PuerkitoBio/goquery](https://github.com/PuerkitoBio/goquery)
 - Swagger [https://swagger.io/](https://swagger.io/)
 
-![application run demo](ezgif-6de383e0f5eb32bc.gif)
+![application run demo](ezgif-39368b5a6bddca25.gif)
 
 ### How to run the application - API
 
 Clone the Repo
 
-Environment Variables
+Environment Variables - create via .env for local setup.
 
 ```bash
 PORT=8080
@@ -36,7 +36,7 @@ go run main.go
 
 Navigate to frontend/web-analyser-web - Node.js version ">=20.9.0" is required
 
-Environment variables
+Environment variables - create via .env for local setup.
 
 ```
 NEXT_PUBLIC_APP_API_URL=http://localhost:8080/process-web-url
