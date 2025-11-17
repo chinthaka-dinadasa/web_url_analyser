@@ -177,7 +177,7 @@ export default function Home() {
                     <span className="font-medium text-green-700">{result.linkData.externalLinks}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700 w-2/4">Unaccessible Links:</span>
+                    <span className="text-blue-700 w-2/4">Inaccessible Links:</span>
                     <span className="font-medium text-green-700">{result.linkData.unAccessibleLinks}</span>
                   </div>
                 </div>
