@@ -144,18 +144,18 @@ func (a *AnalyserService) isLinkAccessible(link string) bool {
 		if err == nil && resp != nil {
 			defer resp.Body.Close()
 			if resp.StatusCode < 400 {
-				fmt.Printf("Success: GET URL %v - %v attempt %d\n", link, resp.StatusCode, attmpt)
+				logger.Info("Success: GET URL", "link", link, "statusCode", resp.StatusCode, "attempt", attmpt)
 				return true
 			}
 		} else {
-			fmt.Printf("Failed: GET URL %v - attempt %d\n", link, attmpt)
+			logger.Info("Failed: GET URL", "link", link, "attempt", attmpt)
 		}
 
 		if attmpt < maxRetries {
-			fmt.Printf("Retrying: GET URL %v failed (attempt %d) - Error: %v\n", link, attmpt, err)
+			logger.Info("Retrying: GET URL", "link", link, "attempt", attmpt, "Err", err)
 		}
 	}
-	fmt.Printf("Failed: GET URL %v after %d attempts\n", link, maxRetries)
+	logger.Info("Failed: GET URL after all attempts", "link", link)
 	return false
 }
 
